@@ -1,61 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Futbol Tahmin</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
-        .mac { background: white; border-radius: 10px; padding: 15px; margin: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .takim { font-size: 1.2em; font-weight: bold; }
-        .skor { font-size: 1.8em; color: #2c3e50; margin: 5px 0; }
-        .durum { color: #7f8c8d; font-style: italic; }
-        h1 { color: #2c3e50; text-align: center; }
-        .yukleniyor { text-align: center; color: #7f8c8d; }
-        .hata { color: #e74c3c; text-align: center; }
-    </style>
-</head>
 <body>
-    <h1>⚽ CANLI FUTBOL MAÇLARI</h1>
-    <div id="maclar" class="yukleniyor">📡 Maçlar yükleniyor...</div>
-
+    <h1>⚽ TEST</h1>
+    <div id="test">Eğer bu yazı değiştiyse JavaScript çalışıyor</div>
     <script>
-        const API_KEY = 'd5aeb2db9f387b44e0308ecf54d36c52';
-        
-        // Bugünün tarihi
-        const bugun = new Date();
-        const tarih = bugun.toISOString().split('T')[0];
-        
-        // API'ye istek
-        fetch(`https://v3.football.api-sports.io/fixtures?date=${tarih}`, {
-            method: 'GET',
-            headers: { 'x-apisports-key': API_KEY }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const maclarDiv = document.getElementById('maclar');
-            
-            if (data.results === 0) {
-                maclarDiv.innerHTML = '🏁 Bugün maç bulunamadı.';
-                return;
-            }
-            
-            let html = '';
-            data.response.forEach(mac => {
-                html += `
-                    <div class="mac">
-                        <div class="takim">${mac.teams.home.name} - ${mac.teams.away.name}</div>
-                        <div class="skor">${mac.goals.home ?? 0} : ${mac.goals.away ?? 0}</div>
-                        <div class="durum">${mac.fixture.status.long}</div>
-                    </div>
-                `;
-            });
-            
-            maclarDiv.innerHTML = html;
-        })
-        .catch(hata => {
-            document.getElementById('maclar').innerHTML = '❌ Hata: ' + hata.message;
-        });
+        document.getElementById('test').innerHTML = '✅ JavaScript ÇALIŞIYOR!';
     </script>
 </body>
 </html>
