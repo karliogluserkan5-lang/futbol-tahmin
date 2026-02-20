@@ -4,84 +4,36 @@
     <title>Futbol Tahmin</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-        .mac { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .takim { font-weight: bold; font-size: 1.2em; }
-        .skor { font-size: 1.5em; color: green; margin-left: 15px; }
-        .durum { font-style: italic; color: #555; margin-top: 5px; }
-        h1 { color: #333; }
-        #yukleniyor { text-align: center; color: #777; }
-    </style>
 </head>
 <body>
-    <h1>⚽ Bugünün Maçları (API Canlı)</h1>
-    <div id="mac-listesi">📡 Veriler yükleniyor...</div>
+    <h1>⚽ Futbol Tahmin Sitesi</h1>
+    <div id="sonuc">API bağlanıyor...</div>
 
     <script>
-        async function maclariGetir() {
-            const apiAnahtari = 'd5aeb2db9f387b44e0308ecf54d36c52'; // SENİN API ANAHTARIN
-            const apiUrlBase = 'https://v3.football.api-sports.io';
+        // API bilgileri
+        const apiAnahtari = 'd5aeb2db9f387b44e0308ecf54d36c52';
+        const apiUrl = 'https://v3.football.api-sports.io/fixtures?date=2025-02-20'; // Sabit tarih
 
-            // Bugünün tarihini al (YYYY-MM-DD formatında)
-            const bugun = new Date();
-            const yil = bugun.getFullYear();
-            const ay = String(bugun.getMonth() + 1).padStart(2, '0');
-            const gun = String(bugun.getDate()).padStart(2, '0');
-            const tarih = `${yil}-${ay}-${gun}`;
-
-            const macListesiDiv = document.getElementById('mac-listesi');
-
-            try {
-                // API'ye isteği gönder
-                const response = await fetch(`${apiUrlBase}/fixtures?date=${tarih}`, {
-                    method: 'GET',
-                    headers: {
-                        'x-apisports-key': apiAnahtari,
-                        'x-apisports-host': 'v3.football.api-sports.io'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Hatası: ${response.status}`);
-                }
-
-                const veri = await response.json();
-
-                // Gelen veriyi kontrol et
-                if (veri.results === 0) {
-                    macListesiDiv.innerHTML = '🏁 Bugün maç yok.';
-                    return;
-                }
-
-                // Maçları listele
-                let htmlIcerik = '';
-                for (let mac of veri.response) {
-                    const evSahibi = mac.teams.home.name;
-                    const deplasman = mac.teams.away.name;
-                    const skorEv = mac.goals.home ?? '?';
-                    const skorDep = mac.goals.away ?? '?';
-                    const durum = mac.fixture.status.long; // Maç durumu (örn: Tamamlandı, İkinci Yarı)
-
-                    htmlIcerik += `
-                        <div class="mac">
-                            <div class="takim">${evSahibi} - ${deplasman}</div>
-                            <div class="skor">${skorEv} : ${skorDep}</div>
-                            <div class="durum">${durum}</div>
-                        </div>
-                    `;
-                }
-                macListesiDiv.innerHTML = htmlIcerik;
-
-            } catch (error) {
-                console.error('Veri çekme hatası:', error);
-                macListesiDiv.innerHTML = `⚠️ Veriler yüklenirken hata oluştu. (<small>${error.message}</small>)`;
+        // API'ye istek at
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'x-apisports-key': apiAnahtari
             }
-        }
-
-        // Sayfa yüklendiğinde fonksiyonu çalıştır
-        maclariGetir();
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API cevabı:', data);
+            if (data.results > 0) {
+                document.getElementById('sonuc').innerHTML = '✅ API çalışıyor! ' + data.results + ' maç bulundu.';
+            } else {
+                document.getElementById('sonuc').innerHTML = '⚠️ API çalışıyor ama bugün maç yok.';
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            document.getElementById('sonuc').innerHTML = '❌ API hatası: ' + error.message;
+        });
     </script>
-    <p><small>Not: API ücretsiz planda günlük istek sınırlıdır. Veriler canlıdır.</small></p>
 </body>
 </html>
